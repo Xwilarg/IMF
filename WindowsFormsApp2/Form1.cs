@@ -20,12 +20,12 @@ namespace WindowsFormsApp2
         public static readonly int BUTTON_SIZE_Y = 23;
         public static readonly int BUTTON_SPACE_Y = 10;
 
-        private static List<Button> imfButtons;
+        private static Dictionary<Button, int> imfButtons;
 
         public Form1()
         {
             InitializeComponent();
-            imfButtons = new List<Button>();
+            imfButtons = new Dictionary<Button, int>();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -51,7 +51,7 @@ namespace WindowsFormsApp2
         {
             foreach (var b in imfButtons)
             {
-                b.Dispose();
+                b.Key.Dispose();
             }
             imfButtons.Clear();
         }
@@ -130,17 +130,28 @@ namespace WindowsFormsApp2
                 b.Text = "IMF n°" + imfCount;
                 b.Location = new Point(BUTTON_POS_X, BUTTON_POS_Y + ((BUTTON_SIZE_Y + BUTTON_SPACE_Y) * imfCount));
                 b.Size = new Size(BUTTON_SIZE_X, BUTTON_SIZE_Y);
-                int tmpImfCount = imfCount;
                 b.Click += (object obj, EventArgs ___) =>
                 {
                     SeriesCollection tmp = new SeriesCollection();
                     var imfs = cartesianChart4.Series.ToList();
-                    imfs.RemoveAt(tmpImfCount - 1);
+                    var button = (Button)obj;
+                    var deleted = imfButtons[button];
+                    button.Dispose();
+                    imfs.RemoveAt(deleted);
                     tmp.AddRange(imfs);
                     cartesianChart4.Series = tmp;
-                    DeleteAllButtons();
+                    List<Button> toModify = new List<Button>();
+                    foreach (var bt in imfButtons)
+                    {
+                        if (bt.Value > deleted)
+                            toModify.Add(bt.Key);
+                    }
+                    foreach (var bt in toModify)
+                    {
+                        imfButtons[bt] -= 1;
+                    }
                 };
-                imfButtons.Add(b);
+                imfButtons.Add(b, imfCount - 1);
                 cartesianChart3.Series = new SeriesCollection
                     {
                         new LineSeries
