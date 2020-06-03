@@ -30,8 +30,8 @@
         {
             this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
             this.button1 = new System.Windows.Forms.Button();
-            this.cartesianChart2 = new LiveCharts.WinForms.CartesianChart();
             this.cartesianChart3 = new LiveCharts.WinForms.CartesianChart();
+            this.cartesianChart4 = new LiveCharts.WinForms.CartesianChart();
             this.SuspendLayout();
             // 
             // cartesianChart1
@@ -52,29 +52,29 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // cartesianChart2
-            // 
-            this.cartesianChart2.Location = new System.Drawing.Point(12, 240);
-            this.cartesianChart2.Name = "cartesianChart2";
-            this.cartesianChart2.Size = new System.Drawing.Size(776, 198);
-            this.cartesianChart2.TabIndex = 2;
-            this.cartesianChart2.Text = "cartesianChart2";
-            // 
             // cartesianChart3
             // 
-            this.cartesianChart3.Location = new System.Drawing.Point(12, 457);
+            this.cartesianChart3.Location = new System.Drawing.Point(12, 495);
             this.cartesianChart3.Name = "cartesianChart3";
             this.cartesianChart3.Size = new System.Drawing.Size(773, 225);
             this.cartesianChart3.TabIndex = 3;
             this.cartesianChart3.Text = "cartesianChart3";
             // 
+            // cartesianChart4
+            // 
+            this.cartesianChart4.Location = new System.Drawing.Point(12, 248);
+            this.cartesianChart4.Name = "cartesianChart4";
+            this.cartesianChart4.Size = new System.Drawing.Size(776, 228);
+            this.cartesianChart4.TabIndex = 4;
+            this.cartesianChart4.Text = "cartesianChart4";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(797, 706);
+            this.ClientSize = new System.Drawing.Size(929, 723);
+            this.Controls.Add(this.cartesianChart4);
             this.Controls.Add(this.cartesianChart3);
-            this.Controls.Add(this.cartesianChart2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.cartesianChart1);
             this.Name = "Form1";
@@ -88,8 +88,8 @@
 
         private LiveCharts.WinForms.CartesianChart cartesianChart1;
         private System.Windows.Forms.Button button1;
-        private LiveCharts.WinForms.CartesianChart cartesianChart2;
         private LiveCharts.WinForms.CartesianChart cartesianChart3;
+        private LiveCharts.WinForms.CartesianChart cartesianChart4;
     }
 }
 

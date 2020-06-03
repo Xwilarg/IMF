@@ -2,6 +2,7 @@
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -13,9 +14,18 @@ namespace WindowsFormsApp2
         public static readonly float RANGE_MIN = -100f;
         public static readonly float RANGE_MAX = 100f;
 
+        public static readonly int BUTTON_POS_X = 800;
+        public static readonly int BUTTON_POS_Y = 230;
+        public static readonly int BUTTON_SIZE_X = 75;
+        public static readonly int BUTTON_SIZE_Y = 23;
+        public static readonly int BUTTON_SPACE_Y = 10;
+
+        private static List<Button> imfButtons;
+
         public Form1()
         {
             InitializeComponent();
+            imfButtons = new List<Button>();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -37,13 +47,25 @@ namespace WindowsFormsApp2
             };
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private static void DeleteAllButtons()
         {
+            foreach (var b in imfButtons)
+            {
+                b.Dispose();
+            }
+            imfButtons.Clear();
+        }
+
+        private void button1_Click(object _, EventArgs __)
+        {
+            DeleteAllButtons();
             var allValues = cartesianChart1.Series[0].Values.Cast<float>().ToArray();
             if (allValues.Length < 2)
                 return;
             List<float> contentMiddle;
             int nbSpikes;
+            int imfCount = 1;
+            List<LineSeries> allImfs = new List<LineSeries>();
             do
             {
                 contentMiddle = new List<float>();
@@ -90,25 +112,6 @@ namespace WindowsFormsApp2
                 contentDown.Add(0f);
                 for (int y = 0; y < contentUp.Count; y++)
                     contentMiddle.Add((contentUp[y] + contentDown[y]) / 2f);
-                cartesianChart2.Series = new SeriesCollection
-                    {
-                        new LineSeries
-                        {
-                            Values = new ChartValues<float>(contentUp)
-                        },
-                        new LineSeries
-                        {
-                            Values = new ChartValues<float>(contentMiddle)
-                        },
-                        new LineSeries
-                        {
-                            Values = new ChartValues<float>(contentDown)
-                        },
-                        new LineSeries
-                        {
-                            Values = new ChartValues<float>(allValues)
-                        }
-                    };
                 List<float> imf = new List<float>();
                 List<float> residue = new List<float>();
                 for (int y = 0; y < contentMiddle.Count; y++)
@@ -117,19 +120,46 @@ namespace WindowsFormsApp2
                     imf.Add(tmp);
                     residue.Add(allValues[y] - tmp);
                 }
+                allImfs.Add(new LineSeries
+                {
+                    Values = new ChartValues<float>(imf),
+                    Title = "IMF n°" + imfCount
+                });
+                Button b = new Button();
+                Controls.Add(b);
+                b.Text = "IMF n°" + imfCount;
+                b.Location = new Point(BUTTON_POS_X, BUTTON_POS_Y + ((BUTTON_SIZE_Y + BUTTON_SPACE_Y) * imfCount));
+                b.Size = new Size(BUTTON_SIZE_X, BUTTON_SIZE_Y);
+                int tmpImfCount = imfCount;
+                b.Click += (object obj, EventArgs ___) =>
+                {
+                    SeriesCollection tmp = new SeriesCollection();
+                    var imfs = cartesianChart4.Series.ToList();
+                    imfs.RemoveAt(tmpImfCount - 1);
+                    tmp.AddRange(imfs);
+                    cartesianChart4.Series = tmp;
+                    DeleteAllButtons();
+                };
+                imfButtons.Add(b);
                 cartesianChart3.Series = new SeriesCollection
                     {
                         new LineSeries
                         {
-                            Values = new ChartValues<float>(imf)
+                            Values = new ChartValues<float>(imf),
+                            Title = "IMF"
                         },
                         new LineSeries
                         {
-                            Values = new ChartValues<float>(residue)
+                            Values = new ChartValues<float>(residue),
+                            Title = "Résidu"
                         }
                     };
                 allValues = residue.ToArray();
+                imfCount++;
             } while (nbSpikes >= 2); //while (contentMiddle.Any(v => Math.Abs(v) > MIDDLE_LIMIT));
+            SeriesCollection sc = new SeriesCollection();
+            sc.AddRange(allImfs);
+            cartesianChart4.Series = sc;
         }
     }
 }
