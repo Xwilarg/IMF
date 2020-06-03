@@ -43,12 +43,13 @@ namespace WindowsFormsApp2
             if (allValues.Length < 2)
                 return;
             List<float> contentMiddle;
-            int debugCounter = 0;
+            int nbSpikes;
             do
             {
                 contentMiddle = new List<float>();
                 List<float> contentUp = new List<float>();
                 List<float> contentDown = new List<float>();
+                nbSpikes = 0;
                 float first = allValues[0];
                 float last = first;
                 bool nextIsUp = allValues[1] > last;
@@ -61,6 +62,7 @@ namespace WindowsFormsApp2
                         {
                             contentUp.Add(last);
                             nextIsUp = false;
+                            nbSpikes++;
                         }
                         else
                         {
@@ -84,32 +86,8 @@ namespace WindowsFormsApp2
                     last = val;
                     i++;
                 }
-                var lastValue = allValues.Last();
-                var beforeLastValue = allValues[allValues.Length - 2];
-                if (nextIsUp)
-                {
-                    if (beforeLastValue < lastValue)
-                    {
-                        contentUp.Add(last);
-                    }
-                    else
-                    {
-                        contentUp.Add(contentUp.Count > 0 ? contentUp.Last() : 0f);
-                    }
-                    contentDown.Add(contentDown.Count > 0 ? contentDown.Last() : 0f);
-                }
-                else
-                {
-                    if (beforeLastValue > lastValue)
-                    {
-                        contentDown.Add(last);
-                    }
-                    else
-                    {
-                        contentDown.Add(contentDown.Count > 0 ? contentDown.Last() : 0f);
-                    }
-                    contentUp.Add(contentUp.Count > 0 ? contentUp.Last() : 0f);
-                }
+                contentUp.Add(0f);
+                contentDown.Add(0f);
                 for (int y = 0; y < contentUp.Count; y++)
                     contentMiddle.Add((contentUp[y] + contentDown[y]) / 2f);
                 cartesianChart2.Series = new SeriesCollection
@@ -151,10 +129,7 @@ namespace WindowsFormsApp2
                         }
                     };
                 allValues = residue.ToArray();
-                MessageBox.Show(this, "WAIT");
-                debugCounter++;
-            } while (contentMiddle.Any(v => Math.Abs(v) > MIDDLE_LIMIT)); // 
-            MessageBox.Show(this, "Done");
+            } while (nbSpikes >= 2); //while (contentMiddle.Any(v => Math.Abs(v) > MIDDLE_LIMIT));
         }
     }
 }
