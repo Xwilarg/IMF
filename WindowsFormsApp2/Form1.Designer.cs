@@ -32,6 +32,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.cartesianChart3 = new LiveCharts.WinForms.CartesianChart();
             this.cartesianChart4 = new LiveCharts.WinForms.CartesianChart();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // cartesianChart1
@@ -68,11 +69,21 @@
             this.cartesianChart4.TabIndex = 4;
             this.cartesianChart4.Text = "cartesianChart4";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(794, 13);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(457, 176);
+            this.textBox1.TabIndex = 5;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 723);
+            this.ClientSize = new System.Drawing.Size(1263, 723);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.cartesianChart4);
             this.Controls.Add(this.cartesianChart3);
             this.Controls.Add(this.button1);
@@ -81,6 +92,7 @@
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -90,6 +102,7 @@
         private System.Windows.Forms.Button button1;
         private LiveCharts.WinForms.CartesianChart cartesianChart3;
         private LiveCharts.WinForms.CartesianChart cartesianChart4;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

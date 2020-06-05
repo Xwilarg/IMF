@@ -3,7 +3,9 @@ using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp2
@@ -30,21 +32,21 @@ namespace WindowsFormsApp2
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            CultureInfo customCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+            Thread.CurrentThread.CurrentCulture = customCulture;
+
             var rand = new Random();
-            ChartValues<float> content = new ChartValues<float>();
+            List<float> numbers = new List<float>();
             for (int i = 0; i < 30; i++)
             {
                 double sample = rand.NextDouble();
                 double scaled = (sample * (RANGE_MAX + Math.Abs(RANGE_MIN))) + RANGE_MIN;
-                content.Add((float)scaled);
+                numbers.Add((float)scaled);
             }
-            cartesianChart1.Series = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Values = content
-                }
-            };
+            string text = string.Join(", ", numbers);
+            UpdateGraph(text);
+            textBox1.Text = text;
         }
 
         private static void DeleteAllButtons()
@@ -171,6 +173,46 @@ namespace WindowsFormsApp2
             SeriesCollection sc = new SeriesCollection();
             sc.AddRange(allImfs);
             cartesianChart4.Series = sc;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            DeleteAllButtons();
+            cartesianChart3.Series = new SeriesCollection();
+            cartesianChart4.Series = new SeriesCollection();
+            TextBox tb = (TextBox)sender;
+            UpdateGraph(tb.Text);
+        }
+
+        private void UpdateGraph(string text)
+        {
+            var values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            ChartValues<float> content = new ChartValues<float>();
+            foreach (string s in values)
+            {
+                if (float.TryParse(s, out float f))
+                {
+                    content.Add(f);
+                }
+                else
+                {
+                    cartesianChart1.Series = new SeriesCollection
+                    {
+                        new LineSeries
+                        {
+                            Values = new ChartValues<float>()
+                        }
+                    };
+                    return;
+                }
+            }
+            cartesianChart1.Series = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Values = content
+                }
+            };
         }
     }
 }
