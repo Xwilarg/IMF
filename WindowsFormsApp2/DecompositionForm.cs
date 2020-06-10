@@ -157,5 +157,11 @@ namespace WindowsFormsApp2
             mainForm.Show();
             this.Dispose();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            new RecompositionForm(mainForm, cartesianChart4.Series.Select(x => x.Values.Cast<float>().ToArray()).ToArray(), cartesianChart3.Series[1].Values.Cast<float>().ToArray()).Show();
+            this.Dispose();
+        }
     }
 }
