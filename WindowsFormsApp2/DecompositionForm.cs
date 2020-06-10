@@ -1,21 +1,15 @@
-﻿using LiveCharts;
-using LiveCharts.Wpf;
+﻿using LiveCharts.Wpf;
+using LiveCharts;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace WindowsFormsApp2
 {
-    public partial class Form1 : Form
+    public partial class DecompositionForm : Form
     {
-        public static readonly float MIDDLE_LIMIT = .5f;
-        public static readonly float RANGE_MIN = -100f;
-        public static readonly float RANGE_MAX = 100f;
-
         public static readonly int BUTTON_POS_X = 800;
         public static readonly int BUTTON_POS_Y = 230;
         public static readonly int BUTTON_SIZE_X = 75;
@@ -24,44 +18,27 @@ namespace WindowsFormsApp2
 
         private static Dictionary<Button, int> imfButtons;
 
-        public Form1()
+        private float[] allValues;
+
+        private Form mainForm;
+
+        public DecompositionForm(Form mainForm, float[] values)
         {
             InitializeComponent();
+            this.mainForm = mainForm;
+            allValues = values;
             imfButtons = new Dictionary<Button, int>();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void DecompositionForm_Load(object sender, EventArgs e)
         {
-            CultureInfo customCulture = (CultureInfo)Thread.CurrentThread.CurrentCulture.Clone();
-            customCulture.NumberFormat.NumberDecimalSeparator = ".";
-            Thread.CurrentThread.CurrentCulture = customCulture;
-
-            var rand = new Random();
-            List<float> numbers = new List<float>();
-            for (int i = 0; i < 30; i++)
-            {
-                double sample = rand.NextDouble();
-                double scaled = (sample * (RANGE_MAX + Math.Abs(RANGE_MIN))) + RANGE_MIN;
-                numbers.Add((float)scaled);
-            }
-            string text = string.Join(", ", numbers);
-            UpdateGraph(text);
-            textBox1.Text = text;
-        }
-
-        private static void DeleteAllButtons()
-        {
-            foreach (var b in imfButtons)
-            {
-                b.Key.Dispose();
-            }
-            imfButtons.Clear();
-        }
-
-        private void button1_Click(object _, EventArgs __)
-        {
-            DeleteAllButtons();
-            var allValues = cartesianChart1.Series[0].Values.Cast<float>().ToArray();
+            cartesianChart1.Series = new SeriesCollection
+                    {
+                        new LineSeries
+                        {
+                            Values = new ChartValues<float>(allValues)
+                        }
+                    };
             if (allValues.Length < 2)
                 return;
             List<float> contentMiddle;
@@ -175,44 +152,10 @@ namespace WindowsFormsApp2
             cartesianChart4.Series = sc;
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            DeleteAllButtons();
-            cartesianChart3.Series = new SeriesCollection();
-            cartesianChart4.Series = new SeriesCollection();
-            TextBox tb = (TextBox)sender;
-            UpdateGraph(tb.Text);
-        }
-
-        private void UpdateGraph(string text)
-        {
-            var values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            ChartValues<float> content = new ChartValues<float>();
-            foreach (string s in values)
-            {
-                if (float.TryParse(s, out float f))
-                {
-                    content.Add(f);
-                }
-                else
-                {
-                    cartesianChart1.Series = new SeriesCollection
-                    {
-                        new LineSeries
-                        {
-                            Values = new ChartValues<float>()
-                        }
-                    };
-                    return;
-                }
-            }
-            cartesianChart1.Series = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Values = content
-                }
-            };
+            mainForm.Show();
+            this.Dispose();
         }
     }
 }
